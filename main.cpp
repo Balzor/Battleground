@@ -1,4 +1,7 @@
 #include <iostream>
+#include <ctime>
+#include <cstdlib>
+#include <algorithm>
 
 void stackGame();
 
@@ -22,6 +25,8 @@ int main() {
 
 void heapGame() {
 
+    srand(time(nullptr));
+
     int x;
     cout << "choose the x size\n";
     cin >> x;
@@ -34,13 +39,83 @@ void heapGame() {
     for (int i=0; i < x; i++)
         battleground[i] = new bool [y];
 
+    int countRand=0;
+    int amount = 20;
     for (int i = 0; i < x; i++){
         for(int j=0; j < y; j++){
-            battleground[i][j]= false;
+
+            int randomval = rand() % 2;
+
+            if (randomval == 1){
+                countRand++;
+            }
+
+            if (countRand<amount){
+                battleground[i][j]= randomval;
+            }else{
+                battleground[i][j]= false;
+            }
+
             cout << battleground[i][j] << " ";
         }
         cout << "\n";
     }
+
+    bool ** battlegroundData = new bool * [ x ];
+    for (int i=0; i < x; i++)
+        battlegroundData[i] = new bool [y];
+    for (int i = 0; i < x; i++) {
+        for (int j = 0; j < y; j++)
+                battlegroundData[i][j] = false;
+    }
+
+    int guesses;
+    cout << "Type the number of guesses you want\n";
+    cin >> guesses;
+
+    int count = 0;
+    int hits = 0;
+
+    while(hits != amount && count != guesses){
+        cout << "This is the map\n";
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                cout << battlegroundData[i][j] << " ";
+            }
+            cout << "\n";
+        }
+
+        cout << "guess the coordinates of the ships in a 2D space\n";
+        int first = 10;
+        int second = 10;
+        while( (first >=y) || (second >=x) ){
+            cout << "guess the y-coordinates (under "<< y << " )\n";
+            cin >> first;
+            cout << "guess the x-coordinates (under "<< x <<  " )\n";
+            cin >> second;
+        }
+
+        if (battleground[first][second]){
+            count++;
+            hits++;
+            cout << "You hit the ship\n";
+            cout << "You hit " << hits << " ships\n";
+            battleground[first][second] = 0;
+            battlegroundData[first][second] = 1;
+        }else{
+            count++;
+            cout << "U no hit ship\n";
+        }
+        cout << "You have " << guesses-count << " guesses left\n";
+    }
+    if (guesses==count){
+        cout << "\n --------------------------------------You lost--------------------------------------------";
+    }else{
+        cout << "\n --------------------------------------You win the game--------------------------------------------";
+    }
+
+    delete [] battleground;
+    delete [] battlegroundData;
 }
 
 void stackGame() {
